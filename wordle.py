@@ -87,11 +87,13 @@ def output_words(words, grey_list, yellow_list={}, green_list={}):
 
 
 if __name__ == '__main__':
-    english_words = load_words('five_letter_words.txt')
+    offical_words = load_words('official_words.txt')
+    all_words = load_words('all_words.txt')
 
     grey_list = []
     green_list = {}
     yellow_list = {}
 
-    output_words(english_words, grey_list, yellow_list, green_list)
-    output_words(words=english_words, grey_list=grey_list + list(green_list.values()), yellow_list=yellow_list)
+    output_words(offical_words, grey_list, yellow_list, green_list)
+    output_words(all_words, grey_list + list(green_list.values()), yellow_list)
+
