@@ -75,6 +75,8 @@ def best_word_sort(words, best_letters):
         results[word] = 0
         word_set = set(word)
         for letter in word_set:
+            if letter not in best_letters:
+                best_letters[letter] = 0
             results[word] += best_letters[letter]
     return sorted(results.items(), key=lambda item: item[1], reverse=True)
 
@@ -95,4 +97,3 @@ if __name__ == '__main__':
     yellow_list = {}
 
     output_words(offical_words, all_words, grey_list, yellow_list, green_list)
-
