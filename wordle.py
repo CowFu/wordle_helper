@@ -79,10 +79,10 @@ def best_word_sort(words, best_letters):
     return sorted(results.items(), key=lambda item: item[1], reverse=True)
 
 
-def output_words(words, grey_list, yellow_list={}, green_list={}):
-    possible_words = valid_words(words, grey_list, yellow_list, green_list)
+def output_words(official_words, all_words, grey_list, yellow_list={}, green_list={}):
+    possible_words = valid_words(official_words, grey_list, yellow_list, green_list)
     best_letters = most_common_letters(possible_words)
-    best_words = best_word_sort(possible_words, best_letters)
+    best_words = best_word_sort(all_words, best_letters)
     print("Best words: {}".format(best_words[0:10]))
 
 
@@ -94,6 +94,5 @@ if __name__ == '__main__':
     green_list = {}
     yellow_list = {}
 
-    output_words(offical_words, grey_list, yellow_list, green_list)
-    output_words(all_words, grey_list + list(green_list.values()), yellow_list)
+    output_words(offical_words, all_words, grey_list, yellow_list, green_list)
 
