@@ -84,6 +84,8 @@ def best_word_sort(words, best_letters):
 def output_words(official_words, all_words, grey_list, yellow_list={}, green_list={}):
     possible_words = valid_words(official_words, grey_list, yellow_list, green_list)
     best_letters = most_common_letters(possible_words)
+    best_words = best_word_sort(possible_words, best_letters)
+    print("Possible words: {}".format(best_words[0:10]))
     best_words = best_word_sort(all_words, best_letters)
     print("Best words: {}".format(best_words[0:10]))
 
@@ -92,8 +94,8 @@ if __name__ == '__main__':
     offical_words = load_words('official_words.txt')
     all_words = load_words('all_words.txt')
 
-    grey_list = []
-    green_list = {}
-    yellow_list = {}
+    grey_list = ['o', 'a', 't', 'e', 'c', 'l', 'i']
+    green_list = {1: 'r'}
+    yellow_list = {1: 'u', 2: 'r'}
 
     output_words(offical_words, all_words, grey_list, yellow_list, green_list)
