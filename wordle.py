@@ -1,7 +1,7 @@
 import logging
 
 
-logging.basicConfig(level=logging.ERROR)
+logging.basicConfig(level=logging.INFO)
 
 
 # loads words from file specified
@@ -94,8 +94,49 @@ if __name__ == '__main__':
     offical_words = load_words('official_words.txt')
     all_words = load_words('all_words.txt')
 
-    grey_list = ['o', 'a', 't', 'e', 'c', 'l', 'i']
-    green_list = {1: 'r'}
-    yellow_list = {1: 'u', 2: 'r'}
+    result_char_list = ["x", "g", "y"]
+    guess = 'start'
 
-    output_words(offical_words, all_words, grey_list, yellow_list, green_list)
+    grey_list = []
+    green_list = {}
+    yellow_list = {}
+
+    while guess not in ['', 'quit', 'q']:
+        output_words(offical_words, all_words, grey_list, yellow_list, green_list)
+
+        while True:
+            guess = input("Which word did you use? ").lower()
+            if len(guess) != 5 or not guess.isalpha():
+                if guess in ['', 'quit', 'q']:
+                    exit()
+                print("please enter a 5 letter word")
+                continue
+            break
+
+        while True:
+            status = input("What was the result? (x=grey g=green y=yellow) ").lower()
+            matched_list = [characters in result_char_list for characters in status]
+            if len(status) != 5 or not all(matched_list):
+                if status in ['', 'quit', 'q']:
+                    exit()
+                print("please enter 5 letters using x, g, y (xxgyx)")
+                continue
+            break
+        logging.info("guess: {} status: {}".format(guess, status))
+
+        for i in range(0, len(status)):
+            logging.info("i: {}, status[i]: {}".format(i, status[i]))
+            if status[i] == 'x':
+                grey_list.append(guess[i])
+            elif status[i] == 'g':
+                green_list[i] = guess[i]
+                logging.info("set greenlist[i] to: {}".format(green_list))
+            elif status[i] == 'y':
+                if i in yellow_list.keys():
+                    yellow_list[i].append(guess[i])
+                else:
+                    yellow_list[i] = [guess[i]]
+
+        # print("grey_list: {}".format(grey_list))
+        # print("green_list: {}".format(green_list))
+        # print("yellow_list: {}".format(yellow_list))
