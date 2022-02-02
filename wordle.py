@@ -1,6 +1,8 @@
 import logging
+from random import sample
+import os
 
-
+os.system("")
 logging.basicConfig(level=logging.INFO)
 
 
@@ -90,28 +92,61 @@ def output_words(official_words, all_words, grey_list, yellow_list={}, green_lis
     print("Best words: {}".format(best_words[0:10]))
 
 
+def user_guess():
+    while True:
+        guess = input("Enter a word: ").lower()
+        if len(guess) != 5 or not guess.isalpha():
+            if guess in ['', 'quit', 'q']:
+                exit()
+            print("please enter a 5 letter word")
+            continue
+        break
+    return guess
+
+
+def game():
+    answer = sample(offical_words, 1)
+    answer = answer[0]
+    print("word is: {}".format(answer))
+    guess = user_guess()
+    feedback = []
+    position = 0
+    for letter in guess:
+        if letter in answer:
+            if guess[position] == answer[position]:
+                feedback.append('\033[1;32;40m ' + letter)
+            else:
+                feedback.append('\u001b[33m ' + letter)
+        else:
+            feedback.append('\u001b[37m ' + letter)
+        position += 1
+    print(feedback)
+    for i in feedback:
+        print(i, end='')
+    print('\u001b[0m')
+
+
 if __name__ == '__main__':
     offical_words = load_words('official_words.txt')
     all_words = load_words('all_words.txt')
 
     result_char_list = ["x", "g", "y"]
-    guess = 'start'
+    print("1. Play \u001b[33m Wordle \u001b[0m")
+    print("2. Wordle Helper")
+    print("enter 'q' or 'quit' to quit")
+    game_choice = input("\n")
 
     grey_list = []
     green_list = {}
     yellow_list = {}
 
-    while guess not in ['', 'quit', 'q']:
+    if game_choice == "1":
+        game()
+
+    while game_choice not in ['', 'quit', 'q']:
         output_words(offical_words, all_words, grey_list, yellow_list, green_list)
 
-        while True:
-            guess = input("Which word did you use? ").lower()
-            if len(guess) != 5 or not guess.isalpha():
-                if guess in ['', 'quit', 'q']:
-                    exit()
-                print("please enter a 5 letter word")
-                continue
-            break
+        guess = user_guess()
 
         while True:
             status = input("What was the result? (x=grey g=green y=yellow) ").lower()
