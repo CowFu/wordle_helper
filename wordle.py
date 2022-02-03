@@ -20,8 +20,11 @@ def load_words(wordsfile):
 
 # checks to see which words are valid given a grey, yellow and green list
 def valid_words(words, grey_list, yellow_list, green_list):
-    logging.debug("valid_words called: \ngrey list: {}\nyellow_list: {}\ngreen_list: {}"
-                  .format(grey_list, yellow_list, green_list))
+    logging.debug(
+        "valid_words called: \ngrey list: {}\nyellow_list: {}\ngreen_list: {}".format(
+            grey_list, yellow_list, green_list
+        )
+    )
     valid_words = []
     for word in words:
         position = 0
@@ -34,7 +37,11 @@ def valid_words(words, grey_list, yellow_list, green_list):
                 for yellow_letter in yellow_list[position]:
                     if letter == yellow_letter:
                         good_word = False
-            if letter in grey_list and letter not in green_list and letter not in yellow_list:
+            if (
+                letter in grey_list
+                and letter not in green_list
+                and letter not in yellow_list
+            ):
                 good_word = False
             position += 1
         if good_word:
@@ -91,7 +98,7 @@ def user_guess():
     while True:
         guess = input("Enter a word: ").lower()
         if len(guess) != 5 or not guess.isalpha():
-            if guess in ['', 'quit', 'q']:
+            if guess in ["", "quit", "q"]:
                 exit()
             print("please enter a 5 letter word")
             continue
@@ -103,7 +110,7 @@ def game():
     answer = sample(list(offical_words), 1)
     answer = answer[0]
     logging.debug("word is: {}".format(answer))
-    guess = ''
+    guess = ""
     while guess != answer:
         answer_left = list(answer)
         guess = user_guess()
@@ -114,65 +121,84 @@ def game():
         for letter in guess:
             # green answers
             if guess[position] == answer[position]:
-                feedback[position] = '\033[1;32;40m ' + letter
-                answer_left[position] = ''
+                feedback[position] = "\033[1;32;40m " + letter
+                answer_left[position] = ""
                 used_guess[position] = True
                 logging.debug("{} set to green".format(letter))
             position += 1
         # yellow answers
         position = 0
+        logging.debug("{}".format(used_guess))
         for letter in guess:
+            logging.debug("answer left: {}".format(answer_left))
             if letter in answer_left and not used_guess[position]:
-                feedback[position] = '\u001b[33m ' + letter
-                answer_left[answer_left.index(letter)] = ''
+                feedback[position] = "\u001b[33m " + letter
+                answer_left[answer_left.index(letter)] = ""
                 logging.debug("{} set to yellow".format(letter))
                 used_guess[position] = True
             # grey answers
             elif not used_guess[position]:
-                feedback[position] = '\u001b[0m ' + letter
-                answer_left[position] = ''
+                feedback[position] = "\u001b[0m " + letter
                 logging.debug("{} set to grey".format(letter))
             position += 1
 
         for i in feedback:
-            print(i, end='')
-        print('\u001b[0m')  # resets console color
+            print(i, end="")
+        print("\u001b[0m")  # resets console color
 
 
-def wordle_helper(output_words, user_guess, offical_words, all_words, result_char_list, game_choice, grey_list, green_list, yellow_list, game_mode=False):
-    while game_choice not in ['', 'quit', 'q']:
+def wordle_helper(
+    output_words,
+    user_guess,
+    offical_words,
+    all_words,
+    result_char_list,
+    game_choice,
+    grey_list,
+    green_list,
+    yellow_list,
+    game_mode=False,
+    game_guess="",
+):
+    while game_choice not in ["", "quit", "q"]:
         output_words(offical_words, all_words, grey_list, yellow_list, green_list)
 
-        guess = user_guess()
+        if game_mode:
+            guess = game_guess
+        else:
+            guess = user_guess()
 
         while True:
             status = input("What was the result? (x=grey g=green y=yellow) ").lower()
             matched_list = [characters in result_char_list for characters in status]
             if len(status) != 5 or not all(matched_list):
-                if status in ['', 'quit', 'q']:
+                if status in ["", "quit", "q"]:
                     exit()
                 print("please enter 5 letters using x, g, y (xxgyx)")
                 continue
             break
         logging.debug("guess: {} status: {}".format(guess, status))
-        if(status == 'ggggg'):
+        if status == "ggggg":
             break
         for i in range(0, len(status)):
             logging.debug("i: {}, status[i]: {}".format(i, status[i]))
-            if status[i] == 'x':
+            if status[i] == "x":
                 grey_list.append(guess[i])
-            elif status[i] == 'g':
+            elif status[i] == "g":
                 green_list[i] = guess[i]
                 logging.debug("set greenlist[i] to: {}".format(green_list))
-            elif status[i] == 'y':
+            elif status[i] == "y":
                 if i in yellow_list.keys():
                     yellow_list[i].append(guess[i])
                 else:
                     yellow_list[i] = [guess[i]]
+        if game_mode:
+            break
 
-if __name__ == '__main__':
-    offical_words = load_words('official_words.txt')
-    all_words = load_words('all_words.txt')
+
+if __name__ == "__main__":
+    offical_words = load_words("official_words.txt")
+    all_words = load_words("all_words.txt")
 
     result_char_list = ["x", "g", "y"]
     print("1. Play \u001b[33mWordle\u001b[0m")
@@ -188,17 +214,27 @@ if __name__ == '__main__':
         play_again = True
         while play_again:
             game()
-            print('would you like to play again?\n1. yes\n2. no')
+            print("would you like to play again?\n1. yes\n2. no")
             play_again_str = input()
-            if play_again_str not in ['yes', 'y', '1']:
+            if play_again_str not in ["yes", "y", "1"]:
                 play_again = False
         exit()
 
     if game_choice == "2":
         play_again = True
         while play_again:
-            wordle_helper(output_words, user_guess, offical_words, all_words, result_char_list, game_choice, grey_list, green_list, yellow_list)
-            print('would you like to play again?\n1. yes\n2. no')
+            wordle_helper(
+                output_words,
+                user_guess,
+                offical_words,
+                all_words,
+                result_char_list,
+                game_choice,
+                grey_list,
+                green_list,
+                yellow_list,
+            )
+            print("would you like to play again?\n1. yes\n2. no")
             play_again_str = input()
-            if play_again_str not in ['yes', 'y', '1']:
+            if play_again_str not in ["yes", "y", "1"]:
                 play_again = False
